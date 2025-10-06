@@ -8,12 +8,12 @@ import { toast } from "sonner";
 import axiosInstance from "@/lib/axiosInterceptor";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-export async function loginUser(email: string, password: string) {
+export async function loginUser(username: string, password: string) {
   try {
     const res = await axiosInstance.post(
       `${BASE_URL}/auth/jwt/create/`,
       {
-        username:email,
+        username,
         password,
       },  { withCredentials: true }
     );
@@ -48,14 +48,13 @@ export function useLogin() {
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
 
-  const login = async (email: string, password: string) => {
+  const login = async (username: string, password: string) => {
     setLoading(true);
     setError(false);
     try {
-      const { access, refresh } = await loginUser(email, password);
-
+      const { access, refresh } = await loginUser(username, password);
       dispatch(setCredentials({ access, refresh }));
-      router.push("/auth/dashboard");
+      router.push("/auth");
     } catch (err) {
       setError(true);
       console.log(err);
