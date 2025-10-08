@@ -54,7 +54,7 @@ export function useLogin() {
     try {
       const { access, refresh } = await loginUser(username, password);
       dispatch(setCredentials({ access, refresh }));
-      router.push("/auth");
+      router.push("/auth/prompt");
     } catch (err) {
       setError(true);
       console.log(err);

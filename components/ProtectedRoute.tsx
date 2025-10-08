@@ -8,7 +8,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         return <div>Loading...</div>
     }
   return (
-    <div>{children}</div>
+    <div className='h-full w-full'>{children}</div>
   )
 }
 

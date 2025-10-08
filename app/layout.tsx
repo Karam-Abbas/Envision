@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Poppins } from "next/font/google";
 import "./globals.css"
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { ReduxProvider } from "@/app/providers/ReduxProvider";
+import { EnvisionProvider } from "@/contexts";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,8 +30,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${poppins.className} antialiased dark`}
       >
-        <ReduxProvider>{children}</ReduxProvider>
-        <Toaster/>
+        <ReduxProvider>
+          <EnvisionProvider>{children}</EnvisionProvider>
+        </ReduxProvider>
+        <Toaster position="top-center" richColors closeButton/>
       </body>
     </html>
   );
