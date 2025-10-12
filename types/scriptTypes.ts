@@ -1,4 +1,5 @@
 export type Scene = {
+  // send id here too
   scene_number: number;
   scene_title: string;
   script: string; // paragraph
@@ -20,3 +21,51 @@ export type ScriptResponse = {
     scenes: Scene[];
   };
 };
+
+export interface editSceneResponse {
+  status: string;
+  message: string;
+  data: {
+    updated_scene: {
+      id: string;
+      scene_number: number;
+      script: string;
+      story_context: string;
+      created_at: string;
+      project_title: string;
+      scene_title: string; // send proper title not Scene 1
+    };
+    edit_instructions_used: string;
+  };
+  next_step: string;
+  available_actions: string[];
+}
+
+export interface editAllScenesResponse {
+  status: string;
+  message: string;
+  data: {
+    project: {
+      title: string;
+      concept: string;
+      num_scenes: number;
+      creativity_level: string;
+      created_at: string;
+      updated_at: string;
+      scenes: {
+        id: string;
+        scene_number: number;
+        script: string;
+        story_context: string;
+        created_at: string;
+        project_title: string;
+        scene_title: string; // send proper title not Scene 1
+      }[];
+    };
+    scenes_updated_count: number;
+    total_scenes: number;
+    edit_instructions_used: string;
+  };
+  next_step: string;
+  available_actions: string[];
+}

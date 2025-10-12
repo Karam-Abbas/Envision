@@ -1,15 +1,22 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { ScriptResponse, Scene } from "@/types/scriptTypes";
+import {
+  ScriptResponse,
+  Scene,
+  editSceneResponse,
+  editAllScenesResponse,
+} from "@/types/scriptTypes";
 import axiosInstance from "@/lib/axiosInterceptor";
 import { useEnvisionContext } from "@/contexts";
 import SceneCard from "@/components/SceneCard";
 import EditDialog from "@/components/EditDialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { mapEditAllScenesResponseToScriptResponse } from "@/lib/utils";
 
 export default function ScriptPage() {
-  const { mainPrompt, scenes, script, setScript,selectedCharacters } = useEnvisionContext();
+  const { mainPrompt, scenes, script, setScript, selectedCharacters } =
+    useEnvisionContext();
   const [isLoading, setIsLoadingLocal] = useState(false);
   const [isEditAllDialogOpen, setIsEditAllDialogOpen] = useState(false);
   const [isEditSceneDialogOpen, setIsEditSceneDialogOpen] = useState(false);
@@ -40,14 +47,16 @@ export default function ScriptPage() {
 
     try {
       setIsSubmitting(true);
-      const response = await axiosInstance.post<ScriptResponse>(
+      const response = await axiosInstance.post<editAllScenesResponse>(
         `/api/edit-all-scenes/`,
         {
           project_id: script?.data.project_id, // Replace with the project id
-          instruction: instruction,
+          edit_instructions: instruction,
         }
       );
-      setScript(response.data);
+      setScript({
+        ...mapEditAllScenesResponseToScriptResponse(response.data, script),
+      });
     } catch (error) {
       toast.error("Error editing all scenes of the script");
     } finally {
@@ -61,7 +70,7 @@ export default function ScriptPage() {
 
     try {
       setIsSubmitting(true);
-      const response = await axiosInstance.post<ScriptResponse>(
+      const { data } = await axiosInstance.post<editSceneResponse>(
         `/api/edit-scene/`,
         {
           project_id: script?.data.project_id, // replace with original project id
@@ -69,10 +78,30 @@ export default function ScriptPage() {
           edit_instructions: instruction,
         }
       );
-      setScript(response.data);
+      const scriptWithUpdatedScene = {
+        ...script,
+        data: {
+          ...script?.data,
+          scenes: script?.data.scenes.map((scene) =>
+            scene.scene_number === selectedScene.scene_number
+              ? {
+                  ...scene,
+                  scene_number: data.data.updated_scene.scene_number,
+                  scene_title: data.data.updated_scene.scene_title,
+                  script: data.data.updated_scene.script,
+                  story_context: data.data.updated_scene.story_context,
+                }
+              : scene
+          ),
+        },
+      };
+
+      setScript(scriptWithUpdatedScene);
       setSelectedScene(null);
     } catch (error) {
-      toast.error(`Error editing scene ${selectedScene?.scene_number} of the script`);
+      toast.error(
+        `Error editing scene ${selectedScene?.scene_number} of the script`
+      );
     } finally {
       setIsEditSceneDialogOpen(false);
       setIsSubmitting(false);
@@ -104,6 +133,8 @@ export default function ScriptPage() {
     );
   }
 
+  const handleAcceptScript = async () => {};
+
   return (
     <div className="space-y-6 p-4">
       <div className="flex items-center justify-between">
@@ -114,7 +145,9 @@ export default function ScriptPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="default">Accept Script</Button>
+          <Button variant="default" onClick={handleAcceptScript}>
+            Accept Script
+          </Button>
           <Button
             onClick={() => setIsEditAllDialogOpen(true)}
             variant="outline"
