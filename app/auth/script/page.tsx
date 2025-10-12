@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 export default function ScriptPage() {
-  const { mainPrompt, scenes, script, setScript } = useEnvisionContext();
+  const { mainPrompt, scenes, script, setScript,selectedCharacters } = useEnvisionContext();
   const [isLoading, setIsLoadingLocal] = useState(false);
   const [isEditAllDialogOpen, setIsEditAllDialogOpen] = useState(false);
   const [isEditSceneDialogOpen, setIsEditSceneDialogOpen] = useState(false);
@@ -24,6 +24,7 @@ export default function ScriptPage() {
         {
           num_scenes: scenes,
           prompt: mainPrompt,
+          trigger_word: selectedCharacters[0].trigger_word,
         }
       );
       setScript(response.data);
@@ -42,7 +43,7 @@ export default function ScriptPage() {
       const response = await axiosInstance.post<ScriptResponse>(
         `/api/edit-all-scenes/`,
         {
-          project_id: 0, // Replace with the project id
+          project_id: script?.data.project_id, // Replace with the project id
           instruction: instruction,
         }
       );
@@ -63,9 +64,9 @@ export default function ScriptPage() {
       const response = await axiosInstance.post<ScriptResponse>(
         `/api/edit-scene/`,
         {
-          project_id: 0, // replace with original project id
-          scene_id: selectedScene.scene_number,
-          instruction: instruction,
+          project_id: script?.data.project_id, // replace with original project id
+          scene_number: selectedScene.scene_number,
+          edit_instructions: instruction,
         }
       );
       setScript(response.data);

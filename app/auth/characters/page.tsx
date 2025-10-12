@@ -61,9 +61,9 @@ export default function CharactersPage() {
     
     try {
       setIsLoading(true);
-      const response = await axiosInstance.post("/api/select-character/", {
-        trigger_word: selectedCharacters[0].trigger_word,
-      });
+      // const response = await axiosInstance.post("/api/select-character/", {
+      //   trigger_word: selectedCharacters[0].trigger_word,
+      // });
     } catch (error) {
       toast.error("Error submitting selection");
     } finally {

@@ -54,6 +54,7 @@ export const EnvisionProvider: React.FC<EnvisionProviderProps> = ({
     status: "success",
     message: "Generated 2 scenes from script generation workflow.",
     data: {
+      project_id: "123",
       project_title: "Generated from: surviving an earthquake",
       original_prompt: "surviving an earthquake",
       trigger_word: "princess merida",

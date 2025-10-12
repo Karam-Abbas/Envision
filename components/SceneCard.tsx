@@ -34,10 +34,6 @@ const SceneCard = ({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="mb-2">
-          <h4 className="font-semibold text-base mb-1">Story Context</h4>
-          <p className="text-sm text-muted-foreground">{scene.story_context}</p>
-        </div>
         <div>
           <h4 className="font-semibold text-base mb-1">Script</h4>
           <p className="text-sm text-muted-foreground">{scene.script}</p>
