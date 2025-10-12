@@ -1,6 +1,6 @@
-# Envision: Collaborative Script Generation App
+# Envision: Script Generation App
 
-Envision is a Next.js-based app for collaboratively creating and editing scripts broken down into scenes. Users can select characters, generate scripts from prompts, edit scenes individually or all at once, and accept finalized scripts.
+Envision is a Next.js-based app for creating and editing scripts broken down into scenes. User can select characters, generate scripts from prompts, edit scenes individually or all at once, and accept finalized scripts.
 
 ## Getting Started
 
