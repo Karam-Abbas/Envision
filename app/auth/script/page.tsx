@@ -13,6 +13,7 @@ import EditDialog from "@/components/EditDialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { mapEditAllScenesResponseToScriptResponse } from "@/lib/utils";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function ScriptPage() {
   const { mainPrompt, scenes, script, setScript, selectedCharacters } =
@@ -57,6 +58,7 @@ export default function ScriptPage() {
       setScript({
         ...mapEditAllScenesResponseToScriptResponse(response.data, script),
       });
+      toast.success("All scenes of the script have been edited successfully");
     } catch (error) {
       toast.error("Error editing all scenes of the script");
     } finally {
@@ -98,6 +100,9 @@ export default function ScriptPage() {
 
       setScript(scriptWithUpdatedScene);
       setSelectedScene(null);
+      toast.success(
+        `Scene ${selectedScene?.scene_number} has been edited successfully`
+      );
     } catch (error) {
       toast.error(
         `Error editing scene ${selectedScene?.scene_number} of the script`
@@ -119,15 +124,17 @@ export default function ScriptPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-lg">Generating script...</div>
+      <div className="flex items-center justify-center p-8 flex-1">
+        <div className="text-xl flex flex-col items-center justify-center gap-2">
+          <Spinner className="size-8" /> Crafting Your Imagination
+        </div>
       </div>
     );
   }
 
   if (!script) {
     return (
-      <div className="flex items-center justify-center p-8">
+      <div className="flex items-center justify-center p-8 flex-1">
         <div className="text-lg">No script available</div>
       </div>
     );
