@@ -1,28 +1,48 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { User, Lock } from "lucide-react"
-import { useState } from "react"
-import { useLogin } from "@/hooks/useLogin"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { User, Lock } from "lucide-react";
+import { useState } from "react";
+import { useLogin } from "@/hooks/useLogin";
+import { toast } from "sonner";
 
-export function LoginForm() {
+export function LoginForm({
+  setCreateAccountSwitch,
+}: {
+  setCreateAccountSwitch: (createAccountSwitch: boolean) => void;
+}) {
   const [form, setForm] = useState({
     username: "",
     password: "",
   });
-  const { login, loading, error } = useLogin();
+  const { login, loading } = useLogin();
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(form);
-    await login(form.username, form.password);
+    const username = form.username.trim();
+    const password = form.password.trim();
+
+    if (!username && !password) {
+      toast.info("Please enter your username and password");
+      return;
+    }
+    if (!username) {
+      toast.info("Please enter your username");
+      return;
+    }
+    if (!password) {
+      toast.info("Please enter your password");
+      return;
+    }
+
+    await login(username, password);
   };
   return (
     <form
@@ -95,13 +115,31 @@ export function LoginForm() {
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                <svg
+                  className="animate-spin h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
                 </svg>
                 Signing in...
               </span>
-            ) : "Sign in"}
+            ) : (
+              "Sign in"
+            )}
           </Button>
         </Field>
 
@@ -111,15 +149,15 @@ export function LoginForm() {
         <Field>
           <FieldDescription className="text-center text-sm">
             New to Envision?{" "}
-            <a
-              href="#"
+            <button
               className="text-[var(--primary)] underline underline-offset-4 hover:text-emerald-600 transition-colors"
+              onClick={() => setCreateAccountSwitch(true)}
             >
               Create an account
-            </a>
+            </button>
           </FieldDescription>
         </Field>
       </FieldGroup>
     </form>
-  )
+  );
 }

@@ -38,7 +38,6 @@ export default function PromptPage() {
       setMainPrompt={setMainPrompt}
       handleKeyPress={handleKeyPress}
       handleSubmit={handleSubmit}
-      loading={false} // We'll handle loading state in the component
     />
   );
 }

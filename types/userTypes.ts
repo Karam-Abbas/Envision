@@ -21,3 +21,9 @@ export interface RootState { // for future case when we have more slices
   auth: AuthState;
   // Add other slice states here as needed
 }
+
+export interface signUpResponse {
+  email: string;
+  username: string;
+  id: number;
+}

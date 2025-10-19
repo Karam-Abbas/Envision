@@ -1,14 +1,31 @@
+"use client";
 import { LoginForm } from "@/components/login-form";
 import Image from "next/image";
-
+import { useState } from "react";
+import SignupForm from "@/components/SignupForm";
+import { motion } from "framer-motion";
 export default function LoginPage() {
+  const [createAccountSwitch, setCreateAccountSwitch] =
+    useState<boolean>(false);
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Left Login Form */}
       <div className="flex-1 flex flex-col gap-4 p-6 md:p-10">
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-sm">
-            <LoginForm />
+            <motion.div
+              key={createAccountSwitch ? "login" : "signup"}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+            >
+              {createAccountSwitch ? (
+                <SignupForm setCreateAccountSwitch={setCreateAccountSwitch} />
+              ) : (
+                <LoginForm setCreateAccountSwitch={setCreateAccountSwitch} />
+              )}
+            </motion.div>
           </div>
         </div>
       </div>

@@ -17,6 +17,7 @@ export async function loginUser(username: string, password: string) {
         password,
       },  { withCredentials: true }
     );
+    toast.success("Login successful");
     return res.data;
   } catch (error: any) {
     console.error(error.stack);
@@ -45,23 +46,26 @@ export async function logoutUser() {
 export function useLogin() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
 
   const login = async (username: string, password: string) => {
     setLoading(true);
-    setError(false);
     try {
       const { access, refresh } = await loginUser(username, password);
       dispatch(setCredentials({ access, refresh }));
       router.push("/auth/prompt");
-    } catch (err) {
-      setError(true);
-      console.log(err);
+    } catch (err: any) {
+      if (err?.response && err.response.status === 400) {
+        toast.error("Invalid credentials");
+      } else if (err?.response && err.response.status === 401) {
+        toast.error("Unauthorized access");
+      } else {
+        toast.error("Something went wrong, unable to login");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  return { login, loading, error };
+  return { login, loading };
 }
