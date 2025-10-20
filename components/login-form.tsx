@@ -46,7 +46,7 @@ export function LoginForm({
   };
   return (
     <form
-      className="flex flex-col gap-6 bg-white md:bg-transparent p-6 md:p-0 rounded-xl"
+      className="flex flex-col gap-6 bg-transparent p-2 md:p-0 rounded-xl"
       onSubmit={handleSubmit}
     >
       <FieldGroup>
