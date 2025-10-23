@@ -49,7 +49,7 @@ const SignupForm = (
   };
   return (
     <form
-      className="flex flex-col gap-6 bg-white md:bg-transparent p-6 md:p-0 rounded-xl"
+      className="flex flex-col gap-6 bg-transparent p-2 md:p-0 rounded-xl"
       onSubmit={handleSubmit}
     >
       <FieldGroup>
@@ -64,7 +64,7 @@ const SignupForm = (
         </div>
 
         {/* First Name & Last Name - Same Row */}
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-row gap-4">
           {/* First Name */}
           <Field className="w-full">
             <FieldLabel htmlFor="first_name">First Name</FieldLabel>
@@ -143,7 +143,7 @@ const SignupForm = (
         </Field>
 
         {/* Password & Confirm Password - Same Row */}
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-row gap-4">
           {/* Password */}
           <Field className="w-full">
             <FieldLabel htmlFor="password">Password</FieldLabel>
