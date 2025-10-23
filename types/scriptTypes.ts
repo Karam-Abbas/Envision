@@ -33,7 +33,7 @@ export interface editSceneResponse {
       story_context: string;
       created_at: string;
       project_title: string;
-      scene_title: string; // send proper title not Scene 1
+      title: string; // send proper title not Scene 1
     };
     edit_instructions_used: string;
   };
@@ -59,7 +59,7 @@ export interface editAllScenesResponse {
         story_context: string;
         created_at: string;
         project_title: string;
-        scene_title: string; // send proper title not Scene 1
+        title: string; // send proper title not Scene 1
       }[];
     };
     scenes_updated_count: number;

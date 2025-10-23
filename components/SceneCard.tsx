@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "./ui/button";
+import Image from "next/image";
 
 const SceneCard = ({
   scene,
@@ -16,7 +17,7 @@ const SceneCard = ({
 }: {
   scene: Scene;
   onEdit: (scene: Scene) => void;
-  images?: SceneImageResponse[];
+  images: SceneImageResponse[];
 }) => {
   const image = images.find((image) => image.scene_number === scene.scene_number);
   console.log(image);
@@ -42,12 +43,8 @@ const SceneCard = ({
           <h4 className="font-semibold text-base mb-1">Script</h4>
           <p className="text-sm text-muted-foreground">{scene.script}</p>
         </div>
-      </CardContent>
-      {image && (
-        <CardContent>
-          <img src={image.image} alt={scene.scene_title} className="w-full h-auto" />
-        </CardContent>
-      )}
+      <Image src={image?.image || ""} alt={scene.scene_title} className="w-full h-auto" width={200} height={200} />
+      </CardContent>  
     </Card>
   );
 };

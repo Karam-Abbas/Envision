@@ -91,7 +91,7 @@ export default function ScriptPage() {
               ? {
                   ...scene,
                   scene_number: data.data.updated_scene.scene_number,
-                  scene_title: data.data.updated_scene.scene_title,
+                  scene_title: data.data.updated_scene.title,
                   script: data.data.updated_scene.script,
                   story_context: data.data.updated_scene.story_context,
                 }
@@ -148,13 +148,13 @@ export default function ScriptPage() {
   const handleAcceptScript = async () => {
     try {
       setIsLoadingLocal(true);
-      const {data}: GenerateImageResponse = await axiosInstance.post(
+      const {data} = await axiosInstance.post<GenerateImageResponse>(
         `/api/generate-images/`,
         {
           project_id: script?.data.project_id,
         }
       );
-      setImages(data.scenes);
+      setImages(data.data.scenes);
     } catch (error) {
       toast.error("Error accepting script");
     } finally {
