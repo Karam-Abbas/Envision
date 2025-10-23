@@ -1,10 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ScriptResponse,
   Scene,
   editSceneResponse,
   editAllScenesResponse,
+  GenerateImageResponse,
 } from "@/types/scriptTypes";
 import axiosInstance from "@/lib/axiosInterceptor";
 import { useEnvisionContext } from "@/contexts";
@@ -14,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { mapEditAllScenesResponseToScriptResponse } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
-
+import { SceneImageResponse } from "@/types/scriptTypes";
 export default function ScriptPage() {
   const { mainPrompt, scenes, script, setScript, selectedCharacters } =
     useEnvisionContext();
@@ -23,7 +24,8 @@ export default function ScriptPage() {
   const [isEditSceneDialogOpen, setIsEditSceneDialogOpen] = useState(false);
   const [selectedScene, setSelectedScene] = useState<Scene | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [images, setImages] = useState<SceneImageResponse[]>([]);
+  const hasFetchedRef = useRef(false);
   const getScript = async () => {
     try {
       setIsLoadingLocal(true);
@@ -119,8 +121,11 @@ export default function ScriptPage() {
   };
 
   useEffect(() => {
-    getScript();
-  }, [scenes, mainPrompt]);
+    if (!hasFetchedRef.current) {
+      getScript();
+      hasFetchedRef.current = true;
+    }
+  }, []);
 
   if (isLoading) {
     return (
@@ -140,7 +145,22 @@ export default function ScriptPage() {
     );
   }
 
-  const handleAcceptScript = async () => {};
+  const handleAcceptScript = async () => {
+    try {
+      setIsLoadingLocal(true);
+      const {data}: GenerateImageResponse = await axiosInstance.post(
+        `/api/generate-images/`,
+        {
+          project_id: script?.data.project_id,
+        }
+      );
+      setImages(data.scenes);
+    } catch (error) {
+      toast.error("Error accepting script");
+    } finally {
+      setIsLoadingLocal(false);
+    }
+  };
 
   return (
     <div className="space-y-6 p-4">
@@ -170,6 +190,7 @@ export default function ScriptPage() {
             key={scene.scene_number}
             scene={scene}
             onEdit={openSceneEditDialog}
+            images= {images}
           />
         ))}
       </div>

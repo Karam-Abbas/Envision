@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import axiosInstance from "@/lib/axiosInterceptor";
@@ -22,6 +22,7 @@ export default function CharactersPage() {
   } = useEnvisionContext();
   
   const [characters, setCharacters] = useState<Character[]>([]);
+  const hasFetchedRef = useRef(false);
 
   const fetchCharacters = async () => {
     try {
@@ -39,7 +40,10 @@ export default function CharactersPage() {
   };
 
   useEffect(() => {
-    fetchCharacters();
+    if (!hasFetchedRef.current) {
+      fetchCharacters();
+      hasFetchedRef.current = true;
+    }
   }, []);
 
   const handleCharacterToggle = (character: Character) => {

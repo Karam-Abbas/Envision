@@ -1,5 +1,5 @@
 import React from "react";
-import { Scene } from "@/types/scriptTypes";
+import { Scene, SceneImageResponse } from "@/types/scriptTypes";
 import {
   Card,
   CardContent,
@@ -12,10 +12,14 @@ import { Button } from "./ui/button";
 const SceneCard = ({
   scene,
   onEdit,
+  images = [],
 }: {
   scene: Scene;
   onEdit: (scene: Scene) => void;
+  images?: SceneImageResponse[];
 }) => {
+  const image = images.find((image) => image.scene_number === scene.scene_number);
+  console.log(image);
   return (
     <Card>
       <CardHeader>
@@ -39,6 +43,11 @@ const SceneCard = ({
           <p className="text-sm text-muted-foreground">{scene.script}</p>
         </div>
       </CardContent>
+      {image && (
+        <CardContent>
+          <img src={image.image} alt={scene.scene_title} className="w-full h-auto" />
+        </CardContent>
+      )}
     </Card>
   );
 };

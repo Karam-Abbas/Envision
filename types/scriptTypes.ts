@@ -69,3 +69,19 @@ export interface editAllScenesResponse {
   next_step: string;
   available_actions: string[];
 }
+
+export interface SceneImageResponse {
+  scene_number: number;
+  scene_title: string;
+  image: string;
+}
+
+export interface GenerateImageResponse {
+  status: string;
+  data: {
+    project_id: string;
+    project_title: string;
+    total_scenes: number;
+    scenes: SceneImageResponse[];
+  };
+}
