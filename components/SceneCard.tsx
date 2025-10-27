@@ -19,7 +19,9 @@ const SceneCard = ({
   onEdit: (scene: Scene) => void;
   images: SceneImageResponse[];
 }) => {
-  const image = images.find((image) => image.scene_number === scene.scene_number);
+  const image = images.find(
+    (image) => image.scene_number === scene.scene_number
+  );
   console.log(image);
   return (
     <Card>
@@ -38,13 +40,21 @@ const SceneCard = ({
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col items-center justify-between">
         <div>
           <h4 className="font-semibold text-base mb-1">Script</h4>
           <p className="text-sm text-muted-foreground">{scene.script}</p>
         </div>
-      <Image src={image?.image || ""} alt={scene.scene_title} className="w-full h-auto" width={200} height={200} />
-      </CardContent>  
+        {image && (
+          <Image
+            src={image?.image || ""}
+            alt={scene.scene_title}
+            className="w-1/4 h-auto rounded-md mt-6"
+            width={100}
+            height={100}
+          />
+        )}
+      </CardContent>
     </Card>
   );
 };
