@@ -56,7 +56,7 @@ export const EnvisionProvider: React.FC<EnvisionProviderProps> = ({
   const [scenes, setScenes] = useState<number>(3);
   const [script, setScript] = useState<ScriptResponse | null>(null);
   const [images, setImages] = useState<SceneImageResponse[] | null>(null);
-  
+
   const value: EnvisionContextType = {
     mainPrompt,
     setMainPrompt,

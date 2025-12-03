@@ -129,45 +129,50 @@ const page = () => {
     );
   }
   return (
-    <div className="space-y-6 p-4 flex-1">
-      <div className="flex flex-1 items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">{script?.data.original_prompt}</h2>
-          <p className="text-muted-foreground">
-            {script?.data.total_scenes} scenes
-          </p>
+    <>
+      <div className="flex flex-col p-4 flex-1">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-bold">
+              {script?.data.original_prompt}
+            </h2>
+            <p className="text-muted-foreground">
+              {script?.data.total_scenes} scenes
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="default"
+              onClick={() => router.push(`/auth/video-generation`)}
+              disabled={isLoading || isSubmitting}
+            >
+              Accept Images
+            </Button>
+            <Button
+              onClick={() => setIsEditAllDialogOpen(true)}
+              variant="outline"
+              disabled={isSubmitting}
+            >
+              Edit All
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="default"
-            onClick={() => router.push(`/auth/video-generation`)}
-            disabled={isLoading || isSubmitting}
-          >
-            Accept Images
-          </Button>
-          <Button
-            onClick={() => setIsEditAllDialogOpen(true)}
-            variant="outline"
-            disabled={isSubmitting}
-          >
-            Edit All
-          </Button>
+
+        <div className="flex flex-col flex-1 items-center justify-center">
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            {images.map((image) => (
+              <ImageCard
+                key={image.scene_number}
+                image={image}
+                onEdit={() => {
+                  setSelectedScene(image);
+                  setIsEditSceneDialogOpen(true);
+                }}
+              />
+            ))}
+          </div>
         </div>
       </div>
-
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          {images.map((image) => (
-            <ImageCard
-              key={image.scene_number}
-              image={image}
-              onEdit={() => {
-                setSelectedScene(image);
-                setIsEditSceneDialogOpen(true);
-              }}
-            />
-          ))}
-        </div>
-
       {/* Edit All Images */}
       <EditDialog
         isOpen={isEditAllDialogOpen}
@@ -198,7 +203,7 @@ const page = () => {
         secondaryPlaceholder="e.g., detailed, cartoon, watercolor, etc."
         secondaryInitialValue=""
       />
-    </div>
+    </>
   );
 };
 
