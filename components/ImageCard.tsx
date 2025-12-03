@@ -2,6 +2,8 @@ import React from "react";
 import { Card } from "./ui/card";
 import { SceneImageResponse } from "@/types/scriptTypes";
 import Image from "next/image";
+import { Download, Edit } from "lucide-react";
+
 const ImageCard = ({
   image,
   onEdit,
@@ -10,7 +12,7 @@ const ImageCard = ({
   onEdit: () => void;
 }) => {
   const convertBase64ToImage = (base64: string) => {
-    return `data:image/png;base64,${base64}`;
+    return `${base64}`;
   };
   const imageUrl = convertBase64ToImage(image.image);
   const handleDownload = () => {
@@ -23,13 +25,30 @@ const ImageCard = ({
   };
   return (
     <Card className="flex flex-col items-center p-4">
-      <div className="w-full mb-2">
+      {/* Title row with buttons aligned across */}
+      <div className="w-full mb-2 flex items-center justify-between gap-2">
         <span
           className="block text-base font-semibold truncate"
           title={image.scene_title}
         >
           {image.scene_title}
         </span>
+        <div className="flex gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={handleDownload}
+            className="px-1 py-1 bg-muted rounded-md hover:bg-muted/70 transition"
+          >
+            <Download className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            onClick={onEdit}
+            className="px-1 py-1 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition"
+          >
+            < Edit className="w-4 h-4" />
+          </button>
+        </div>
       </div>
       <Image
         src={imageUrl}
@@ -37,24 +56,8 @@ const ImageCard = ({
         width={512}
         height={320}
         style={{ maxWidth: "100%", height: "auto" }}
-        className="rounded-md w-full mb-4"
+        className="rounded-md w-72 mb-4"
       />
-      <div className="flex justify-center gap-2 w-full">
-        <button
-          type="button"
-          onClick={handleDownload}
-          className="px-4 py-2 bg-muted rounded hover:bg-muted/70 transition"
-        >
-          Download
-        </button>
-        <button
-          type="button"
-          onClick={onEdit}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition"
-        >
-          Edit
-        </button>
-      </div>
     </Card>
   );
 };

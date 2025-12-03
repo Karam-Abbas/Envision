@@ -1,10 +1,8 @@
+"use client";
 import axiosInstance from "@/lib/axiosInterceptor";
-import {
-  GenerateImageResponse,
-  SceneImageResponse,
-} from "@/types/scriptTypes";
+import { GenerateImageResponse, SceneImageResponse } from "@/types/scriptTypes";
 import { EditAllImagesResponse, EditImageResponse } from "@/types/imageTypes";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { toast } from "sonner";
 import { useEnvisionContext } from "@/contexts";
 import { Button } from "@/components/ui/button";
@@ -13,9 +11,8 @@ import ImageCard from "@/components/ImageCard";
 import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
 const page = () => {
-  const { script } = useEnvisionContext();
+  const { script, images, setImages } = useEnvisionContext();
   const [isLoading, setIsLoadingLocal] = useState(false);
-  const [images, setImages] = useState<SceneImageResponse[]>([]);
   const [isEditAllDialogOpen, setIsEditAllDialogOpen] = useState(false);
   const [isEditSceneDialogOpen, setIsEditSceneDialogOpen] = useState(false);
   const [selectedScene, setSelectedScene] = useState<SceneImageResponse | null>(
@@ -52,7 +49,7 @@ const page = () => {
         `/api/edit-all-images/`,
         {
           project_id: script?.data.project_id,
-          instruction: inputData.instruction,
+          edit_instructions: inputData.instruction,
           style: inputData.style,
         }
       );
@@ -88,13 +85,15 @@ const page = () => {
           style: inputData.style,
         }
       );
-      setImages(
-        images.map((image) =>
-          image.scene_number === selectedScene?.scene_number
-            ? { ...image, image: data.data.edited_image }
-            : image
-        )
-      );
+      if (images) {
+        setImages(
+          images.map((image) =>
+            image.scene_number === selectedScene?.scene_number
+              ? { ...image, image: data.data.edited_image }
+              : image
+          )
+        );
+      }
       toast.success("Image has been edited successfully");
     } catch (error) {
       toast.error("Error editing scene");
@@ -103,11 +102,13 @@ const page = () => {
       setIsEditSceneDialogOpen(false);
     }
   };
-
+  const hasFetchedImagesRef = useRef(false);
   useEffect(() => {
-    if (script?.data.project_id) {
-      generateImages(script.data.project_id);
-    }
+    if (!script?.data.project_id) return;
+    if (hasFetchedImagesRef.current) return;
+
+    hasFetchedImagesRef.current = true;
+    generateImages(script.data.project_id);
   }, [script?.data.project_id]);
 
   if (isLoading) {
@@ -120,7 +121,7 @@ const page = () => {
     );
   }
 
-  if (!images.length) {
+  if (!images || images.length === 0) {
     return (
       <div className="flex items-center justify-center p-8 flex-1">
         <div className="text-lg">No images available</div>
@@ -128,8 +129,8 @@ const page = () => {
     );
   }
   return (
-    <div className="space-y-6 p-4">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 p-4 flex-1">
+      <div className="flex flex-1 items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">{script?.data.original_prompt}</h2>
           <p className="text-muted-foreground">
@@ -154,15 +155,18 @@ const page = () => {
         </div>
       </div>
 
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {images.map((image, idx) => (
-          <ImageCard
-            key={image.scene_number}
-            image={image}
-            onEdit={() => setSelectedScene(image)}
-          />
-        ))}
-      </div>
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          {images.map((image) => (
+            <ImageCard
+              key={image.scene_number}
+              image={image}
+              onEdit={() => {
+                setSelectedScene(image);
+                setIsEditSceneDialogOpen(true);
+              }}
+            />
+          ))}
+        </div>
 
       {/* Edit All Images */}
       <EditDialog

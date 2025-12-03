@@ -5,7 +5,6 @@ import {
   Scene,
   editSceneResponse,
   editAllScenesResponse,
-  GenerateImageResponse,
 } from "@/types/scriptTypes";
 import axiosInstance from "@/lib/axiosInterceptor";
 import { useEnvisionContext } from "@/contexts";
@@ -15,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { mapEditAllScenesResponseToScriptResponse } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
-import { SceneImageResponse } from "@/types/scriptTypes";
+import { useRouter } from "next/navigation";
+
 export default function ScriptPage() {
   const { mainPrompt, scenes, script, setScript, selectedCharacters } =
     useEnvisionContext();
@@ -24,8 +24,10 @@ export default function ScriptPage() {
   const [isEditSceneDialogOpen, setIsEditSceneDialogOpen] = useState(false);
   const [selectedScene, setSelectedScene] = useState<Scene | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [images, setImages] = useState<SceneImageResponse[]>([]);
+
   const hasFetchedRef = useRef(false);
+  const router = useRouter();
+
   const getScript = async () => {
     try {
       setIsLoadingLocal(true);
@@ -53,7 +55,7 @@ export default function ScriptPage() {
       const response = await axiosInstance.post<editAllScenesResponse>(
         `/api/edit-all-scenes/`,
         {
-          project_id: script?.data.project_id, // Replace with the project id
+          project_id: script?.data.project_id,
           edit_instructions: instruction,
         }
       );
@@ -77,7 +79,7 @@ export default function ScriptPage() {
       const { data } = await axiosInstance.post<editSceneResponse>(
         `/api/edit-scene/`,
         {
-          project_id: script?.data.project_id, // replace with original project id
+          project_id: script?.data.project_id,
           scene_number: selectedScene.scene_number,
           edit_instructions: instruction,
         }
@@ -145,21 +147,9 @@ export default function ScriptPage() {
     );
   }
 
-  const handleAcceptScript = async () => {
-    try {
-      setIsLoadingLocal(true);
-      const {data} = await axiosInstance.post<GenerateImageResponse>(
-        `/api/generate-images/`,
-        {
-          project_id: script?.data.project_id,
-        }
-      );
-      setImages(data.data.scenes);
-    } catch (error) {
-      toast.error("Error accepting script");
-    } finally {
-      setIsLoadingLocal(false);
-    }
+  // No image generation here, just redirect
+  const handleAcceptScript = () => {
+    router.push("/auth/images");
   };
 
   return (
@@ -190,7 +180,6 @@ export default function ScriptPage() {
             key={scene.scene_number}
             scene={scene}
             onEdit={openSceneEditDialog}
-            images= {images}
           />
         ))}
       </div>

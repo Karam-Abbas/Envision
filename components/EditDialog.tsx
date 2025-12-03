@@ -52,11 +52,11 @@ const EditDialog: React.FC<EditDialogProps> = ({
   const handleSubmit = () => {
     if (secondaryLabel) {
       onSubmit({
-        [secondaryLabel]: secondaryValue,
-        ["Edit Instruction"]: value,
+        instruction: value,
+        style: secondaryValue,
       });
     } else {
-      onSubmit(value);
+      onSubmit({ instruction :value, style: ""});
     }
   };
 
@@ -111,9 +111,7 @@ const EditDialog: React.FC<EditDialogProps> = ({
             type="submit"
             onClick={handleSubmit}
             disabled={
-              isLoading ||
-              !value.trim() ||
-              (secondaryLabel ? !secondaryValue.trim() : false)
+              isLoading || !value.trim()
             }
           >
             {isLoading ? "Submitting..." : "Submit"}
