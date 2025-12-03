@@ -18,8 +18,11 @@ interface EditDialogProps {
   description: string;
   placeholder: string;
   initialValue?: string;
-  onSubmit: (value: string) => void;
+  onSubmit: (value: any) => void;
   isLoading?: boolean;
+  secondaryLabel?: string;
+  secondaryPlaceholder?: string;
+  secondaryInitialValue?: string;
 }
 
 const EditDialog: React.FC<EditDialogProps> = ({
@@ -31,22 +34,35 @@ const EditDialog: React.FC<EditDialogProps> = ({
   initialValue = "",
   onSubmit,
   isLoading = false,
+  secondaryLabel,
+  secondaryPlaceholder = "",
+  secondaryInitialValue = "",
 }) => {
   const [value, setValue] = useState(initialValue);
+  const [secondaryValue, setSecondaryValue] = useState(secondaryInitialValue);
 
-  // Reset value when dialog opens with new initial value
+  // Reset value(s) when dialog opens with new initial values
   useEffect(() => {
     if (isOpen) {
       setValue(initialValue);
+      setSecondaryValue(secondaryInitialValue || "");
     }
-  }, [isOpen, initialValue]);
+  }, [isOpen, initialValue, secondaryInitialValue]);
 
   const handleSubmit = () => {
-    onSubmit(value);
+    if (secondaryLabel) {
+      onSubmit({
+        [secondaryLabel]: secondaryValue,
+        ["Edit Instruction"]: value,
+      });
+    } else {
+      onSubmit(value);
+    }
   };
 
   const handleClose = () => {
     setValue(initialValue);
+    setSecondaryValue(secondaryInitialValue || "");
     onClose();
   };
 
@@ -71,15 +87,34 @@ const EditDialog: React.FC<EditDialogProps> = ({
               rows={4}
             />
           </div>
+          {secondaryLabel && (
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="secondary-input" className="text-right">
+                {secondaryLabel} (Optional)
+              </Label>
+              <input
+                id="secondary-input"
+                value={secondaryValue}
+                onChange={(e) => setSecondaryValue(e.target.value)}
+                placeholder={secondaryPlaceholder}
+                className="col-span-3 border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                type="text"
+              />
+            </div>
+          )}
         </div>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={handleClose}>
             Cancel
           </Button>
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             onClick={handleSubmit}
-            disabled={isLoading || !value.trim()}
+            disabled={
+              isLoading ||
+              !value.trim() ||
+              (secondaryLabel ? !secondaryValue.trim() : false)
+            }
           >
             {isLoading ? "Submitting..." : "Submit"}
           </Button>
