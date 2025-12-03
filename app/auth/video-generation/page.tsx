@@ -83,16 +83,18 @@ const page = () => {
   }
 
   return (
-    <div className="flex items-center justify-center p-8 flex-1 min-h-screen">
+    <div className="flex items-center justify-center p-8 flex-1">
       <div className="w-full max-w-4xl">
-        <video
-          src={videoUrl!}
-          controls
-          className="w-full h-auto rounded-lg shadow-lg"
-          autoPlay
-        >
-          Your browser does not support the video tag.
-        </video>
+        <div className="aspect-video w-full">
+          <video
+            src={videoUrl!}
+            controls
+            className="w-full h-full rounded-lg"
+            autoPlay
+          >
+            Your browser does not support the video tag.
+          </video>
+        </div>
       </div>
     </div>
   );
